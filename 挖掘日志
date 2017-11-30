@@ -1,0 +1,89 @@
+    less access_20170319.log | wc -l
+    1080577       
+    // 平均每秒的请求数
+    less access_20170319.log | awk '{sec=substr($4,2,20);reqs++;reqsBySec[sec]++;} END{print reqs/length(reqsBySec)}'
+    14.0963       
+    // 峰值每秒请求数
+ less access_20170319.log | awk '{sec=substr($4,2,20);requests[sec]++;} END{for(s in requests){printf("%s %s\n", requests[s],s)}}' | sort -nr | head -n 10
+    // 峰值每分钟请求数
+less access_20170319.log | awk '{sec=substr($4,2,17);requests[sec]++;} END{for(s in requests){printf("%s %s\n", requests[s],s)}}' | sort -nr | head -n 10
+
+less access_20170319.log | awk '{sec=substr($4,2,17);requests[sec]++;} END{for(s in requests){printf("%s %s\n", requests[s],s)}}' | sort -nr | head -n 10
+
+ less access_20170804.log | awk -F "\"" '{sec=substr($4,1,17);requests[sec]++;} END{for(s in requests){printf("%s %s\n", requests[s],s)}}' | sort -nr | head -n 10
+
+    Page Visits  Response Size  Time Spent/req  Moment
+    182 10/Apr/2016:12:53:20  
+    161 10/Apr/2016:12:54:53
+    160 10/Apr/2016:10:47:23
+     //url访问 请求数排名
+less access_20170319.log | awk '{url=$7; requests[url]++;} END{for(url in requests){printf("%s %s\n",requests[url],url)}}' | sort -nr | head -n 15
+
+less access_20170319.log | awk 'url=$7; requests[url]++;bytes[url]+=$10} END{for(url in requests){printf("%sMB %sKB/req %s %s\n", bytes[url] / 
+1024 / 1024, bytes[url] /requests[url] / 1024, requests[url], url)}}' | sort -nr | head -n 15
+
+less main.log | awk '{url=$7; times[url]++} END{for(url in times){printf("%s %s\n", times[url], url)}}' | sort -nr | more`
+
+less main.log | awk '{print $7}' |sed -re 's/(.*)\?.*/\1/g' -e 's/(.*)\..*/\1/g' -e 's:/[0-9]+:/*:g' | awk '{requests[$1]++;time[$1]
++=$2} END{for(url in requests){printf("%smin %ss/req %s %s\n", time
+[url] / 60, time[url] /requests[url], requests[url], url)}}' | sort -nr | head -n 50
+
+less main.log | awk -v limit=2 '{min=substr($4,2,17);reqs[min]
+++;if($11>limit){slowReqs[min]++}} END{for(m in slowReqs){printf("%s
+ %s %s%s %s\n", m, slowReqs[m]/reqs[m] * 100, "%", slowReqs[m], reqs
+[m])}}' | more
+
+less access_20170319.log | awk  '{min=substr($4,2,14);url=$7; if(url=="/mobileEC/services/account/login"){requests[min]++;}} END{for(m in requests) {printf("%s   %s  \n",m,requests[m])}}'  | sort -nr   
+
+检查tcp的timewait状态
+ netstat -n | awk '/^tcp/ {++S[$NF]} END {for(a in S) print a, S[a]}'
+ 
+ netstat -ae|grep "TIME_WAIT" |wc -l 
+
+netstat -n | awk '/^tcp/ {++state[$NF]} END {for(key in state) print key,"\t",state[key]}' 
+
+查找较多time_wait连接
+netstat -n|grep TIME_WAIT|awk '{print $5}'|sort|uniq -c|sort -rn|head -n20
+ 
+netstat + awk 查询连接数两种方法，意义相同
+1：netstat -pnt | awk '/^tcp/{print $5}' | cut -d: -f 1 | sort -n |uniq -c
+2：netstat -pnt | awk '/^tcp/{s=split($5,N,":");A[N[s-1]]++} END{ for (k in A) print k,A[k]}'
+3：netstat -nat|awk '{print$5}'|awk -F : '{print$1}'|sort|uniq -c|sort -rn
+
+
+netstat -ntlp
+netstat -anp | grep 3306
+netstat -an
+netstat -ae |grep mysql
+ 
+ 
+netstat -i -e 显示主机上每个网络接口的配置和状态
+netstat -lp 标识正在监听的网络服务
+netstat -rn  检查路由表
+netstat -s 查看各种网络协议运行的统计信息
+
+netstat -tln 用来查看linux的端口使用情况
+netstat --ip -an
+
+
+vim /root/satools/freemem.sh
+#!/bin/bash
+
+used=`free -m | awk 'NR==2' | awk '{print $3}'`
+free=`free -m | awk 'NR==2' | awk '{print $4}'`
+
+echo "===========================" >> /var/log/mem.log
+date >> /var/log/mem.log
+echo "Memory usage | [Use：${used}MB][Free：${free}MB]" >> /var/log/mem.log
+
+if [ $free -le 100 ] ; then
+                sync && echo 1 > /proc/sys/vm/drop_caches
+                sync && echo 2 > /proc/sys/vm/drop_caches
+                sync && echo 3 > /proc/sys/vm/drop_caches
+                echo "OK" >> /var/log/mem.log
+else
+                echo "Not required" >> /var/log/mem.log
+将脚本添加到crond任务，定时执行。
+# echo "*/30 * * * * root /root/satools/freemem.sh" >> /etc/crondtab
+
+
