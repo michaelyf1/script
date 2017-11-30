@@ -1,0 +1,12 @@
+配合Cygwin使用。Cygwin之下的安装非常简单。执行如下指令即可：
+
+wget -q -O - --no-check-certificate https://github.com/nvie/gitflow/raw/develop/contrib/gitflow-installer.sh | bash 
+
+执行 git flow init 命令后出现错误："flags: FATAL unable to determine getopt version"
+
+需要使用Cygwin的Util-linux安装包。重新使用cywgin的setup安装吧。
+
+如果出现类似"$'\r': command not found"的错误，则可能是换行符出现了问题。可以使用sed命令来快速解决。
+
+$ sed -i 's/\n\r/\n/mg' /usr/local/bin/git-flow*
+$ sed -i 's/\n\r/\n/mg' /usr/local/bin/gitflow-* 
