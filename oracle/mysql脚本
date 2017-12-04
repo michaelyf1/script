@@ -1,0 +1,14 @@
+create database xxl_job;
+
+CREATE DATABASE xxl_job;
+create user 'xxl_job'@'localhost' identified by 'xxl_job'; 
+create user 'xxl_job'@'%' identified by 'xxl_job';
+
+grant all privileges on xxl_job.* to 'xxl_job'@'localhost' identified by 'xxl_job';
+grant all privileges on xxl_job.* to 'xxl_job'@'%' identified by 'xxl_job';
+flush privileges;   
+
+插入部分语句时
+set names gbk;
+
+show full columns from USER_ROLE;
