@@ -86,4 +86,8 @@ else
 将脚本添加到crond任务，定时执行。
 # echo "*/30 * * * * root /root/satools/freemem.sh" >> /etc/crondtab
 
+sed -i "s/#UsePrivilegeSeparation.*/UsePrivilegeSeparation no/g" /etc/ssh/sshd_config
+
+
+
 
