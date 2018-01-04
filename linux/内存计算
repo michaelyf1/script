@@ -1,0 +1,41 @@
+http://blog.csdn.net/maimang1001/article/details/44103781
+
+$ cat RSS.sh
+#/bin/bash                                                                                                               
+for PROC in `ls  /proc/|grep "^[0-9]"`
+do
+  if [ -f /proc/$PROC/statm ]; then
+      TEP=`cat /proc/$PROC/statm | awk '{print ($2)}'`
+      RSS=`expr $RSS + $TEP`
+  fi
+done
+RSS=`expr $RSS \* 4`
+echo $RSS"KB"
+$ ./RSS.sh  
+
+
+$ cat cm.sh
+#/bin/bash
+for PROC in `ls /proc/|grep "^[0-9]"`
+do
+  if [ -f /proc/$PROC/statm ]; then
+      TEP=`cat /proc/$PROC/statm | awk '{print ($2)}'`
+      RSS=`expr $RSS + $TEP`
+  fi
+done
+RSS=`expr $RSS \* 4`
+PageTable=`grep PageTables /proc/meminfo | awk '{print $2}'`
+SlabInfo=`cat /proc/slabinfo |awk 'BEGIN{sum=0;}{sum=sum+$3*$4;}END{print sum/1024/1024}'`
+
+echo $RSS"KB", $PageTable"KB", $SlabInfo"MB"
+printf "rss+pagetable+slabinfo=%sMB\n" `echo $RSS/1024 + $PageTable/1024 + $SlabInfo|bc`
+free -m
+
+$ ./cm.sh
+7003756KB, 59272KB, 904.334MB
+rss+pagetable+slabinfo=7800.334MB
+             total       used       free     shared    buffers     cached
+Mem:         48262       8050      40211          0         17        404
+-/+ buffers/cache:       7629      40633
+Swap:         2047        336       1711
+sed -i 's/172.30.0.122:1521:iboxpay/要替换的IP:端口:实例/g' /home/wdk...
